@@ -1,0 +1,572 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>无重复字符的最长子串 | 喔喔</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="IM_WOWER">
+    
+    <meta name="description" content="无重复字符的最长子串给定一个字符串，请你找出其中不含有重复字符的最长子串的长度。
+
+示例 1:输入: &amp;quot;abcabcbb&amp;quot;
+输出: 3 
+解释: 因为无重复字符的最长子串是 &amp;quot;abc&amp;quot;，所以其长度为 3。
+
+
+示例 2:输入: &amp;quot;bbbbb&amp;quot">
+    
+    
+    
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="im_wower" />
+    <meta name="twitter:title" content="无重复字符的最长子串 | 喔喔" />
+      
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/wower.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/wower.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/wower.jpg" alt="喔喔" title="喔喔"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="喔喔">喔喔</a></h1>
+				<h2 class="blog-motto">喔喔的收藏夹</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/links">Links</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2020/05/11/longest-substring-without-repeating-characters/" title="无重复字符的最长子串" itemprop="url">无重复字符的最长子串</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="https://makefile.so" title="IM_WOWER">IM_WOWER</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2020-05-11T21:00:21.000Z" itemprop="datePublished">2020-05-11</time>
+    Updated:<time datetime="2024-12-09T03:37:03.225Z" itemprop="dateModified">2024-12-09</time>
+    
+  </p>
+</header>
+
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		<ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%97%A0%E9%87%8D%E5%A4%8D%E5%AD%97%E7%AC%A6%E7%9A%84%E6%9C%80%E9%95%BF%E5%AD%90%E4%B8%B2"><span class="toc-number">1.</span> <span class="toc-text">无重复字符的最长子串</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%9D%E8%B7%AF%EF%BC%9A"><span class="toc-number">2.</span> <span class="toc-text">思路：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6%EF%BC%9A"><span class="toc-number">3.</span> <span class="toc-text">时间复杂度：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9B%BE%E8%A7%A3%EF%BC%9A"><span class="toc-number">4.</span> <span class="toc-text">图解：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B%E4%BB%A3%E7%A0%81%EF%BC%9A"><span class="toc-number">5.</span> <span class="toc-text">示例代码：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%96%EF%BC%9A"><span class="toc-number">6.</span> <span class="toc-text">示例代码优化：</span></a></li></ol>
+		</div>
+		
+		<h4 id="无重复字符的最长子串"><a href="#无重复字符的最长子串" class="headerlink" title="无重复字符的最长子串"></a>无重复字符的最长子串</h4><p>给定一个字符串，请你找出其中<strong>不含有重复字符</strong>的<strong>最长子串</strong>的长度。</p>
+<ul>
+<li>示例 1:<pre><code class="bash">输入: &quot;abcabcbb&quot;
+输出: 3 
+解释: 因为无重复字符的最长子串是 &quot;abc&quot;，所以其长度为 3。
+</code></pre>
+</li>
+<li>示例 2:<pre><code class="bash">输入: &quot;bbbbb&quot;
+输出: 1
+解释: 因为无重复字符的最长子串是 &quot;b&quot;，所以其长度为 1。
+</code></pre>
+</li>
+<li>示例 3:<pre><code class="bash">输入: &quot;pwwkew&quot;
+输出: 3
+解释: 因为无重复字符的最长子串是 &quot;wke&quot;，所以其长度为 3。
+</code></pre>
+  <em>请注意，你的答案必须是 子串 的长度，”pwke” 是一个子序列，不是子串。</em></li>
+</ul>
+<p>来源：力扣（LeetCode）<br>链接：<a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/longest-substring-without-repeating-characters">https://leetcode-cn.com/problems/longest-substring-without-repeating-characters</a><br>著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。</p>
+<h4 id="思路："><a href="#思路：" class="headerlink" title="思路："></a>思路：</h4><ol>
+<li>字符串从左往右遍历<code>i=0</code>，第<code>0</code>个字符为新的开始索引<code>index</code>；</li>
+<li>将字符存入哈希表<code>map</code>，<code>value</code>为该字符所在的索引<code>i</code>；</li>
+<li>继续遍历<code>i++</code>；判断当前字符<code>chars[i]</code>是否在<code>map</code>中出现过：<ol>
+<li><code>map</code>不包含当前字符：<ol>
+<li>将当前字符和索引<code>i</code>存入<code>map</code>；</li>
+<li>因为有新的字符加入，所以这次的长度<code>length+1</code>；</li>
+<li>对比最大值<code>result</code>与<code>length</code>，取两者中的较大者；</li>
+</ol>
+</li>
+<li><code>map</code>包含当前字符，分两种情况：<ol>
+<li>之前的旧的字符，落在了开始索引之后（或相等）：<ol>
+<li>此时<code>length</code>是不变的，比如：<code>[pwe]w</code>和<code>p[wew]</code>的长度都是3；</li>
+<li>但是因为遇到了重复字符，所以需要把<code>index</code>更新为<code>旧的字符所在的索引+1</code>；</li>
+</ol>
+</li>
+<li>之前的旧的字符，落在了开始索引之前：<ol>
+<li>因为之前的旧的字符超出了<code>index</code>，相当于超出了统计范围，所以不再统计；</li>
+<li>将该字符的索引更新为新的索引；</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>遍历结束，<code>result</code>为最终结果。</li>
+</ol>
+<h4 id="时间复杂度："><a href="#时间复杂度：" class="headerlink" title="时间复杂度："></a>时间复杂度：</h4><p>不考虑map的时间复杂度，只需要一次遍历，所以时间复杂度是<code>O(N)</code>，<code>N</code>为字符串长度。</p>
+<h4 id="图解："><a href="#图解：" class="headerlink" title="图解："></a>图解：</h4><ol>
+<li>字符串从左往右遍历<code>i=0</code>，第<code>0</code>个字符为新的开始索引<code>index=0</code>：<br> <img src="/images/longest-substring-without-repeating-characters/longest-substring-without-repeating-characters-1.jpg" alt="初始化"></li>
+<li>将字符存入哈希表<code>map</code>，<code>value</code>为该字符所在的索引<code>i</code>；<br> <img src="/images/longest-substring-without-repeating-characters/longest-substring-without-repeating-characters-2.jpg" alt="将开始节点存入map"></li>
+<li>继续遍历<code>i++</code>；判断当前字符<code>chars[i]</code>是否在<code>map</code>中出现过：<ol>
+<li><code>map</code>不包含当前字符：<ol>
+<li>将当前字符和索引<code>i</code>存入<code>map</code>；</li>
+<li>因为有新的字符加入，所以这次的长度<code>length+1</code>；</li>
+<li>对比最大值<code>result</code>与<code>length</code>，取两者中的较大者；<br><img src="/images/longest-substring-without-repeating-characters/longest-substring-without-repeating-characters-3.jpg" alt="3"></li>
+</ol>
+</li>
+<li><code>map</code>包含当前字符，分两种情况：<ol>
+<li>之前的旧的字符，落在了开始索引之后（或相等）：<ol>
+<li>此时<code>length</code>是不变的，比如：<code>[pwe]w</code>和<code>p[wew]</code>的长度都是3；</li>
+<li>但是因为遇到了重复字符，所以需要把<code>index</code>更新为<code>旧的字符所在的索引+1</code>；<img src="/images/longest-substring-without-repeating-characters/longest-substring-without-repeating-characters-4.jpg" alt="4"></li>
+</ol>
+</li>
+<li>之前的旧的字符，落在了开始索引之前：<ol>
+<li>因为之前的旧的字符超出了<code>index</code>，相当于超出了统计范围，所以不再统计；</li>
+<li>将该字符的索引更新为新的索引；<br><img src="/images/longest-substring-without-repeating-characters/longest-substring-without-repeating-characters-5.jpg" alt="5"></li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>遍历结束，<code>result</code>为最终结果。</li>
+</ol>
+<h4 id="示例代码："><a href="#示例代码：" class="headerlink" title="示例代码："></a>示例代码：</h4><pre><code class="java">import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class SubString &#123;
+    public static void main(String args[]) &#123;
+        List&lt;String&gt; strings = Arrays.asList(new String[]&#123;
+                &quot;dvdf&quot;,
+                &quot;aab&quot;,
+                &quot;pwwkewwwskep&quot;,
+                &quot;pwwwkew&quot;,
+                &quot;pwwakepw&quot;,
+                &quot;pww&quot;,
+                &quot;bbbbbb&quot;,
+                &quot;abcabcbb&quot;,
+                &quot;ckilbkd&quot;
+        &#125;);
+
+        strings.forEach(s -&gt;
+                new Thread(() -&gt; &#123;
+                    int m = lengthOfLongestSubstring(s);
+                    System.out.println(s + &quot; max: &quot; + m);
+                &#125;).start()
+        );
+        //    dvdf max: 3
+        //  pwwakepw max: 5
+        //  pww max: 2
+        //  pwwwkew max: 3
+        //  bbbbbb max: 1
+        //  aab max: 2
+        //  pwwkewwwskep max: 5
+        //  abcabcbb max: 3
+        //  ckilbkd max: 5
+    &#125;
+
+    public static int lengthOfLongestSubstring(String s) &#123;
+        int index = 0; //新的开始索引；
+        int result = 0; //最终结果；
+        Map map = new HashMap&lt;Character, Integer&gt;();
+        char[] chars = s.toCharArray();
+        for (int i = 0; i &lt; chars.length; i++) &#123;
+            char current = chars[i];
+            if (map.containsKey(current)) &#123;
+                int old = (int) map.get(current); //该字符旧的索引；
+                if (old &gt;= index) &#123; //如果旧值落在了之后：
+                    index = old + 1; //将index前进一位，开始新的计数；
+                    map.put(current, i); //更新一下索引；
+                &#125; else &#123; //如果旧值落在了之前：
+                    map.put(current, i); //更新一下索引；
+                    int length = i + 1 - index; //当前最大的长度；
+                    result = Math.max(result, length); //当前最大的长度与之前的对比，取最大值；
+                &#125;
+            &#125; else &#123;
+                map.put(current, i); //将当前字符和索引存入map；
+                int length = i + 1 - index; //当前最大的长度；
+                result = Math.max(result, length); //当前最大的长度与之前的对比，取最大值；
+            &#125;
+        &#125;
+        return result;
+    &#125;
+&#125;
+</code></pre>
+<h4 id="示例代码优化："><a href="#示例代码优化：" class="headerlink" title="示例代码优化："></a>示例代码优化：</h4><p>去掉<code>if-else</code>里面重复的判断逻辑。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/算法/">算法</a><a href="/tags/无重复字符的最长子串/">无重复字符的最长子串</a>
+  </div>
+
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="https://makefile.so/2020/05/11/longest-substring-without-repeating-characters/" data-title="无重复字符的最长子串 | 喔喔" data-tsina="" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2021/01/23/trie-tree-and-route-match/" title="使用特里树匹配动态路由">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  使用特里树匹配动态路由</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2020/05/10/Hilbert-map-of-ip-address/"  title="希尔伯特曲线与IP地址映射">
+ <strong>NEXT:</strong><br/> 
+ <span>希尔伯特曲线与IP地址映射
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+    <section class="comment">
+        <div id="vssue"></div>
+        <script src="https://unpkg.com/vue/dist/vue.runtime.min.js"></script>
+        <script src="https://unpkg.com/vssue/dist/vssue.github.min.js"></script>
+        <script>
+            new Vue({
+                el: '#vssue',
+                render: h => h('Vssue', {
+                    props: {
+                        title: '无重复字符的最长子串',
+                        options: {
+                            owner: 'imwower',
+                            repo: 'imwower.github.io',
+                            clientId: '894cf60c98c43ae1093d',
+                            clientSecret: 'fd3f62d0e91cb7e414fe7fcb0cc27932847974ec',
+                        },
+                    }
+                })
+            })
+        </script>
+        <link rel="stylesheet" href="https://unpkg.com/vssue/dist/vssue.min.css">
+        <style>
+            .vssue {
+                padding: 0;
+                padding-top: 10px;
+            }
+            .vssue :not(.vssue-comment-content) a {
+                color: #2ca6cb;
+            }
+            .vssue .vssue-button:not(:disabled).vssue-button-primary {
+                color: #2ca6cb;
+                border-color: #2ca6cb;
+            }
+            .vssue .vssue-button {
+                border: 2px solid #2ca6cb;
+                border-radius: 1px;
+            }
+            .vssue .vssue-new-comment .vssue-new-comment-input {
+                border-radius: 1px;
+            }
+            .vssue .vssue-status, vssue-progress-color, vssue-border-color {
+                color: #2ca6cb;
+            }
+        </style>
+    </section>
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+  <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%97%A0%E9%87%8D%E5%A4%8D%E5%AD%97%E7%AC%A6%E7%9A%84%E6%9C%80%E9%95%BF%E5%AD%90%E4%B8%B2"><span class="toc-number">1.</span> <span class="toc-text">无重复字符的最长子串</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%9D%E8%B7%AF%EF%BC%9A"><span class="toc-number">2.</span> <span class="toc-text">思路：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6%EF%BC%9A"><span class="toc-number">3.</span> <span class="toc-text">时间复杂度：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9B%BE%E8%A7%A3%EF%BC%9A"><span class="toc-number">4.</span> <span class="toc-text">图解：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B%E4%BB%A3%E7%A0%81%EF%BC%9A"><span class="toc-number">5.</span> <span class="toc-text">示例代码：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%96%EF%BC%9A"><span class="toc-number">6.</span> <span class="toc-text">示例代码优化：</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+			<li><a href="/categories/创意/" title="创意">创意<sup>2</sup></a></li>
+		
+			<li><a href="/categories/想法/" title="想法">想法<sup>1</sup></a></li>
+		
+			<li><a href="/categories/软件/" title="软件">软件<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/2020/" title="2020">2020<sup>1</sup></a></li>
+		
+			<li><a href="/tags/ApplicationEventPublisher/" title="ApplicationEventPublisher">ApplicationEventPublisher<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Controller/" title="Controller">Controller<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Enum/" title="Enum">Enum<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Evernote/" title="Evernote">Evernote<sup>1</sup></a></li>
+		
+			<li><a href="/tags/GitHub/" title="GitHub">GitHub<sup>1</sup></a></li>
+		
+			<li><a href="/tags/GitHub-Actions/" title="GitHub Actions">GitHub Actions<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>1</sup></a></li>
+		
+			<li><a href="/tags/IP地址/" title="IP地址">IP地址<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Idea/" title="Idea">Idea<sup>1</sup></a></li>
+		
+			<li><a href="/tags/InstaPaper/" title="InstaPaper">InstaPaper<sup>1</sup></a></li>
+		
+			<li><a href="/tags/IntelliJ/" title="IntelliJ">IntelliJ<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Java/" title="Java">Java<sup>4</sup></a></li>
+		
+			<li><a href="/tags/Macbook/" title="Macbook">Macbook<sup>1</sup></a></li>
+		
+			<li><a href="/tags/MethodArgumentNotValidException/" title="MethodArgumentNotValidException">MethodArgumentNotValidException<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Mock/" title="Mock">Mock<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NUL/" title="NUL">NUL<sup>1</sup></a></li>
+		
+			<li><a href="/tags/P2P/" title="P2P">P2P<sup>1</sup></a></li>
+		
+			<li><a href="/tags/PlantUML/" title="PlantUML">PlantUML<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Pocket/" title="Pocket">Pocket<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+</aside>
+</div>      
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://twitter.com/im_wower" target="_blank" title="twitter"></a>
+		
+		
+		<a href="https://github.com/imwower" target="_blank" title="github"></a>
+		
+		
+	</div>
+		<p class="copyright">🤍 POWERED BY <a href="http://hexo.io" target="_blank" title="hexo">HEXO</a> AND THEME BY <a href="https://github.com/wizicer/iceman" target="_blank" title="Iceman">ICEMAN</a> © COPYLEFT 2012 - 2024 COPYRIGHT
+		
+		<a href="https://makefile.so" target="_blank" title="IM_WOWER">IM_WOWER 🤍</a>
+		
+		</p>
+</div>
+
+
+<!-- Highlight.js -->
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/styles/atom-one-dark-reasonable.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/highlight.min.js">
+</script>
+<script>
+    hljs.initHighlightingOnLoad();
+</script>
+
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-57642548-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+  </body>
+</html>
