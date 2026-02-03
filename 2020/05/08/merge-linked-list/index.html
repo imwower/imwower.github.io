@@ -1,0 +1,538 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>堆排序合并N个有序链表 | 喔喔</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="IM_WOWER">
+    
+    <meta name="description" content="合并N个有序链表：思路：
+将每个链表的头节点组成一个包含N个元素的数组 arr，length为N；
+用数组构造小顶堆，堆顶的最小值，就是最终result的第一个节点；
+1 如果length为1，说明只剩下一个链表了，将该链表剩余部分接到result，退出递归；
+取走堆顶的元素，也就是arr[0]；将">
+    
+    
+    
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="im_wower" />
+    <meta name="twitter:title" content="堆排序合并N个有序链表 | 喔喔" />
+      
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/wower.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/wower.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/wower.jpg" alt="喔喔" title="喔喔"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="喔喔">喔喔</a></h1>
+				<h2 class="blog-motto">喔喔的收藏夹</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/links">Links</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2020/05/08/merge-linked-list/" title="堆排序合并N个有序链表" itemprop="url">堆排序合并N个有序链表</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="https://makefile.so" title="IM_WOWER">IM_WOWER</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2020-05-08T11:42:24.000Z" itemprop="datePublished">2020-05-08</time>
+    Updated:<time datetime="2026-02-03T12:02:08.092Z" itemprop="dateModified">2026-02-03</time>
+    
+  </p>
+</header>
+
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		<ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%90%88%E5%B9%B6N%E4%B8%AA%E6%9C%89%E5%BA%8F%E9%93%BE%E8%A1%A8%EF%BC%9A"><span class="toc-number">1.</span> <span class="toc-text">合并N个有序链表：</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#%E6%80%9D%E8%B7%AF%EF%BC%9A"><span class="toc-number">1.0.1.</span> <span class="toc-text">思路：</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6%EF%BC%9A"><span class="toc-number">1.0.2.</span> <span class="toc-text">时间复杂度：</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E5%9B%BE%E8%A7%A3%EF%BC%9A"><span class="toc-number">1.0.3.</span> <span class="toc-text">图解：</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B%E4%BB%A3%E7%A0%81%EF%BC%9A"><span class="toc-number">1.0.4.</span> <span class="toc-text">示例代码：</span></a></li></ol></li></ol></li></ol>
+		</div>
+		
+		<h4 id="合并N个有序链表："><a href="#合并N个有序链表：" class="headerlink" title="合并N个有序链表："></a>合并N个有序链表：</h4><h6 id="思路："><a href="#思路：" class="headerlink" title="思路："></a>思路：</h6><ol>
+<li>将每个链表的头节点组成一个包含N个元素的数组 <code>arr</code>，<code>length</code>为<code>N</code>；</li>
+<li>用数组构造小顶堆，堆顶的最小值，就是最终<code>result</code>的第一个节点；</li>
+<li>1 如果<code>length</code>为1，说明只剩下一个链表了，将该链表剩余部分接到<code>result</code>，退出递归；</li>
+<li>取走堆顶的元素，也就是<code>arr[0]</code>；将<code>arr[0]</code>的链表指向下一个节点；</li>
+<li>1 如果下一个节点为空，说明当前的链表结束了，需要将它从开头交换到末尾，然后将<code>length-1</code>；</li>
+<li>因为数组变化了，递归执行第2步；</li>
+</ol>
+<h6 id="时间复杂度："><a href="#时间复杂度：" class="headerlink" title="时间复杂度："></a>时间复杂度：</h6><ol>
+<li>由N个链表组成数组，进行小顶堆交换，时间复杂度为：<code>logN</code>；</li>
+<li>对于每个链表，假设长度都是K，则都需要遍历，时间复杂度为：<code>K</code>；<br>所以总的时间复杂度为：<code>O(K*logN)</code></li>
+</ol>
+<h6 id="图解："><a href="#图解：" class="headerlink" title="图解："></a>图解：</h6><ol>
+<li><p>将每个链表的头节点组成一个包含N个元素的数组 arr；<br><img src="/images/merge_linked_list/merge_linked_list_1.jpg" alt="merge_linked_list_1.jpg"></p>
+</li>
+<li><p>用数组构造小顶堆，堆顶的最小值，就是最终结果链表的第一个节点；</p>
+</li>
+<li><p>1 如果<code>length</code>为1，说明只剩下一个链表了，将该链表剩余部分接到<code>result</code>，退出递归<br><img src="/images/merge_linked_list/merge_linked_list_2.jpg" alt="merge_linked_list_2.jpg"></p>
+</li>
+<li><p>取走堆顶的元素，也就是arr[0]；将arr[0]的链表指向下一个节点；</p>
+</li>
+<li><p>1 如果下一个节点为空，说明当前的链表结束了，需要将它从开头交换到末尾，然后将数组的长度-1；<br><img src="/images/merge_linked_list/merge_linked_list_3.jpg" alt="merge_linked_list_3.jpg"></p>
+</li>
+<li><p>因为数组变化了，递归执行第2步；<br><img src="/images/merge_linked_list/merge_linked_list_4.jpg" alt="merge_linked_list_4.jpg"></p>
+</li>
+</ol>
+<h6 id="示例代码："><a href="#示例代码：" class="headerlink" title="示例代码："></a>示例代码：</h6><pre><code class="java">public class Test &#123;
+    public static void main(String[] args) &#123;
+        ListNode l1 = ListNode.getInstance(new int[]&#123;3, 4, 5, 6, 28&#125;);
+        ListNode l2 = ListNode.getInstance(new int[]&#123;1, 5, 6, 8, 20&#125;);
+        ListNode l3 = ListNode.getInstance(new int[]&#123;2, 5, 6, 20&#125;);
+        ListNode l4 = ListNode.getInstance(new int[]&#123;0, 2, 10, 12&#125;);
+        ListNode[] list = &#123;l1, l2, l3, l4&#125;;
+        //最终结果：
+        ListNode result = new ListNode(0);
+        //指向result的指针；因为每次取新的节点时，c需要向后位移；而result为最开始的头节点；
+        ListNode c = result;
+        //堆排序合并：
+        heap(list, c, list.length);
+        //去掉头节点：
+        System.out.println(result.next.toString());
+        //0 -&gt; 1 -&gt; 2 -&gt; 2 -&gt; 3 -&gt; 4 -&gt; 5 -&gt; 5 -&gt; 5 -&gt; 6 -&gt; 6 -&gt; 6 -&gt; 8 -&gt; 10 -&gt; 12 -&gt; 20 -&gt; 20 -&gt; 28s
+    &#125;
+
+    //length不是arr的长度；因为递归的过程中，某个链表可能先结束了；
+    //将先结束的链表交换到数组末尾，然后把length-1；
+    public static void heap(ListNode[] arr, ListNode c, int length) &#123;
+        //只剩下一个链表：
+        if (length == 1) &#123;
+            //将剩余部分接到result中：
+            c.next = arr[0];
+            //退出递归：
+            return;
+        &#125;
+        //构造小顶堆
+        for (int i = length / 2 - 1; i &gt;= 0; i--) &#123;
+            adjust(arr, i, length);
+        &#125;
+        //数组第一个元素就是最小的元素，取出来，放入结果链表：
+        c.next = arr[0];
+        //将结果链表的指针后移：
+        c = c.next;
+        //将数组第一个元素的指针后移：
+        arr[0] = arr[0].next;
+        //如果链表为空，说明该链表提前结束了：
+        if (arr[0] == null) &#123;
+            //将先结束的链表交换到数组末尾
+            arr[0] = arr[length - 1];
+            //然后把length-1；
+            length--;
+        &#125;
+        heap(arr, c, length);
+    &#125;
+
+    //构造小顶堆，并交换元素：
+    public static void adjust(ListNode[] arr, int i, int length) &#123;
+        for (int k = i * 2 + 1; k &lt; length; k = k * 2 + 1) &#123;
+            if (k + 1 &lt; length &amp;&amp; arr[k].val &gt; arr[k + 1].val) &#123;
+                k++;
+            &#125;
+            if (arr[i].val &gt; arr[k].val) &#123;
+                ListNode value = arr[i];
+                arr[i] = arr[k];
+                arr[k] = value;
+                i = k;
+            &#125;
+        &#125;
+    &#125;
+&#125;
+</code></pre>
+<pre><code class="java">public class ListNode &#123;
+    public int val;
+    public ListNode next;
+
+    public ListNode(int val) &#123;
+        this.val = val;
+    &#125;
+
+    public static ListNode getInstance(int[] values) &#123;
+        ListNode t = new ListNode(0);
+        ListNode n = t;
+        for (int i = 0; i &lt; values.length; i++) &#123;
+            n.next = new ListNode(values[i]);
+            n = n.next;
+        &#125;
+        return t.next;
+    &#125;
+
+    @Override
+    public String toString() &#123;
+        StringBuilder sb = new StringBuilder().append(val);
+        ListNode next = this.next;
+        while (next != null) &#123;
+            sb.append(&quot; -&gt; &quot;).append(next.val);
+            next = next.next;
+        &#125;
+        return sb.toString();
+    &#125;
+&#125;
+</code></pre>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/算法/">算法</a><a href="/tags/堆排序/">堆排序</a><a href="/tags/合并有序链表/">合并有序链表</a>
+  </div>
+
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="https://makefile.so/2020/05/08/merge-linked-list/" data-title="堆排序合并N个有序链表 | 喔喔" data-tsina="" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2020/05/08/hello-world/" title="使用GitHub Pages托管博客">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  使用GitHub Pages托管博客</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2020/05/07/game-do-not-starve/"  title="饥荒（don&#39;t starve）">
+ <strong>NEXT:</strong><br/> 
+ <span>饥荒（don&#39;t starve）
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+    <section class="comment">
+        <div id="vssue"></div>
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.min.js"></script>
+        <script src="https://unpkg.com/vssue/dist/vssue.github.min.js"></script>
+        <script>
+            new Vue({
+                el: '#vssue',
+                render: h => h('Vssue', {
+                    props: {
+                        title: '堆排序合并N个有序链表',
+                        options: {
+                            owner: 'imwower',
+                            repo: 'imwower.github.io',
+                            clientId: '894cf60c98c43ae1093d',
+                            clientSecret: 'fd3f62d0e91cb7e414fe7fcb0cc27932847974ec',
+                        },
+                    }
+                })
+            })
+        </script>
+        <link rel="stylesheet" href="https://unpkg.com/vssue/dist/vssue.min.css">
+        <style>
+            .vssue {
+                padding: 0;
+                padding-top: 10px;
+            }
+            .vssue :not(.vssue-comment-content) a {
+                color: #2ca6cb;
+            }
+            .vssue .vssue-button:not(:disabled).vssue-button-primary {
+                color: #2ca6cb;
+                border-color: #2ca6cb;
+            }
+            .vssue .vssue-button {
+                border: 2px solid #2ca6cb;
+                border-radius: 1px;
+            }
+            .vssue .vssue-new-comment .vssue-new-comment-input {
+                border-radius: 1px;
+            }
+            .vssue .vssue-status, vssue-progress-color, vssue-border-color {
+                color: #2ca6cb;
+            }
+        </style>
+    </section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+  <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%90%88%E5%B9%B6N%E4%B8%AA%E6%9C%89%E5%BA%8F%E9%93%BE%E8%A1%A8%EF%BC%9A"><span class="toc-number">1.</span> <span class="toc-text">合并N个有序链表：</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#%E6%80%9D%E8%B7%AF%EF%BC%9A"><span class="toc-number">1.0.1.</span> <span class="toc-text">思路：</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6%EF%BC%9A"><span class="toc-number">1.0.2.</span> <span class="toc-text">时间复杂度：</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E5%9B%BE%E8%A7%A3%EF%BC%9A"><span class="toc-number">1.0.3.</span> <span class="toc-text">图解：</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B%E4%BB%A3%E7%A0%81%EF%BC%9A"><span class="toc-number">1.0.4.</span> <span class="toc-text">示例代码：</span></a></li></ol></li></ol></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+			<li><a href="/categories/创意/" title="创意">创意<sup>2</sup></a></li>
+		
+			<li><a href="/categories/想法/" title="想法">想法<sup>1</sup></a></li>
+		
+			<li><a href="/categories/软件/" title="软件">软件<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/2020/" title="2020">2020<sup>1</sup></a></li>
+		
+			<li><a href="/tags/ApplicationEventPublisher/" title="ApplicationEventPublisher">ApplicationEventPublisher<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Controller/" title="Controller">Controller<sup>1</sup></a></li>
+		
+			<li><a href="/tags/DSL/" title="DSL">DSL<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Enum/" title="Enum">Enum<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Evernote/" title="Evernote">Evernote<sup>1</sup></a></li>
+		
+			<li><a href="/tags/GUI/" title="GUI">GUI<sup>1</sup></a></li>
+		
+			<li><a href="/tags/GitHub/" title="GitHub">GitHub<sup>1</sup></a></li>
+		
+			<li><a href="/tags/GitHub-Actions/" title="GitHub Actions">GitHub Actions<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Gossip/" title="Gossip">Gossip<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>1</sup></a></li>
+		
+			<li><a href="/tags/IP地址/" title="IP地址">IP地址<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Idea/" title="Idea">Idea<sup>1</sup></a></li>
+		
+			<li><a href="/tags/InstaPaper/" title="InstaPaper">InstaPaper<sup>1</sup></a></li>
+		
+			<li><a href="/tags/IntelliJ/" title="IntelliJ">IntelliJ<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Java/" title="Java">Java<sup>4</sup></a></li>
+		
+			<li><a href="/tags/Macbook/" title="Macbook">Macbook<sup>1</sup></a></li>
+		
+			<li><a href="/tags/MethodArgumentNotValidException/" title="MethodArgumentNotValidException">MethodArgumentNotValidException<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Mock/" title="Mock">Mock<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NUL/" title="NUL">NUL<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+</aside>
+</div>      
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://twitter.com/im_wower" target="_blank" title="twitter"></a>
+		
+		
+		<a href="https://github.com/imwower" target="_blank" title="github"></a>
+		
+		
+	</div>
+		<p class="copyright">🤍 POWERED BY <a href="http://hexo.io" target="_blank" title="hexo">HEXO</a> AND THEME BY <a href="https://github.com/wizicer/iceman" target="_blank" title="Iceman">ICEMAN</a> © COPYLEFT 2012 - 2026 COPYRIGHT
+		
+		<a href="https://makefile.so" target="_blank" title="IM_WOWER">IM_WOWER 🤍</a>
+		
+		</p>
+</div>
+
+
+<!-- Highlight.js -->
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/styles/atom-one-dark-reasonable.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/highlight.min.js">
+</script>
+<script>
+    hljs.highlightAll();
+</script>
+
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+
+
+  </body>
+</html>

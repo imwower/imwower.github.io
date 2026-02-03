@@ -1,0 +1,873 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>（三）Pulse GUI 语言设计理念与规范 | 喔喔</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="IM_WOWER">
+    
+    <meta name="description" content="（三）Pulse GUI 语言设计理念与规范前言第一篇聊了范式，第二篇落地成语言。接下来该画界面了。
+这篇记录 Pulse GUI 的设计思路。
+
+一、从哪里开始？前两篇设计的是逻辑层——事件怎么流转、模块怎么通信。但程序不只有逻辑，还有界面。
+先想清楚一个问题：程序运行在哪？
+前端（客户端）：用户">
+    
+    
+    
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="im_wower" />
+    <meta name="twitter:title" content="（三）Pulse GUI 语言设计理念与规范 | 喔喔" />
+      
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/wower.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/wower.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/wower.jpg" alt="喔喔" title="喔喔"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="喔喔">喔喔</a></h1>
+				<h2 class="blog-motto">喔喔的收藏夹</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/links">Links</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2026/01/27/pulse-gui-design/" title="（三）Pulse GUI 语言设计理念与规范" itemprop="url">（三）Pulse GUI 语言设计理念与规范</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="https://makefile.so" title="IM_WOWER">IM_WOWER</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2026-01-27T12:00:00.000Z" itemprop="datePublished">2026-01-27</time>
+    Updated:<time datetime="2026-02-03T12:02:08.092Z" itemprop="dateModified">2026-02-03</time>
+    
+  </p>
+</header>
+
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%EF%BC%88%E4%B8%89%EF%BC%89Pulse-GUI-%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E7%90%86%E5%BF%B5%E4%B8%8E%E8%A7%84%E8%8C%83"><span class="toc-number">1.</span> <span class="toc-text">（三）Pulse GUI 语言设计理念与规范</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E4%BB%8E%E5%93%AA%E9%87%8C%E5%BC%80%E5%A7%8B%EF%BC%9F"><span class="toc-number">1.2.</span> <span class="toc-text">一、从哪里开始？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%8C%E3%80%81GUI-%E7%9A%84%E6%9C%AC%E8%B4%A8"><span class="toc-number">1.3.</span> <span class="toc-text">二、GUI 的本质</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E4%B8%89%E5%85%83-%C3%97-%E4%B8%89%E5%B1%82"><span class="toc-number">1.4.</span> <span class="toc-text">三、三元 × 三层</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E8%87%AA%E8%BA%AB%EF%BC%9A%E6%98%AF%E4%BB%80%E4%B9%88-%E6%9C%89%E4%BB%80%E4%B9%88"><span class="toc-number">1.5.</span> <span class="toc-text">四、自身：是什么 &#x2F; 有什么</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#node%EF%BC%88%E5%8E%9F%E5%AD%90%EF%BC%89"><span class="toc-number">1.5.1.</span> <span class="toc-text">node（原子）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#component%EF%BC%88%E7%BB%84%E5%90%88%EF%BC%89"><span class="toc-number">1.5.2.</span> <span class="toc-text">component（组合）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#view%EF%BC%88%E8%81%9A%E5%90%88%EF%BC%89"><span class="toc-number">1.5.3.</span> <span class="toc-text">view（聚合）</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E4%B8%96%E7%95%8C%EF%BC%9A%E5%9C%A8%E5%93%AA%E9%87%8C-%E6%80%8E%E4%B9%88%E5%8A%A8"><span class="toc-number">1.6.</span> <span class="toc-text">五、世界：在哪里 &#x2F; 怎么动</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#space%EF%BC%88%E5%8E%9F%E5%AD%90%EF%BC%89"><span class="toc-number">1.6.1.</span> <span class="toc-text">space（原子）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#viewport%EF%BC%88%E7%BB%84%E5%90%88%EF%BC%89"><span class="toc-number">1.6.2.</span> <span class="toc-text">viewport（组合）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#scene%EF%BC%88%E8%81%9A%E5%90%88%EF%BC%89"><span class="toc-number">1.6.3.</span> <span class="toc-text">scene（聚合）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%80%8E%E4%B9%88%E5%8A%A8%EF%BC%9A%E6%97%A0%E6%97%B6%E9%97%B4%E5%8A%A8%E7%94%BB"><span class="toc-number">1.6.4.</span> <span class="toc-text">怎么动：无时间动画</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E5%85%B3%E7%B3%BB%EF%BC%9A%E4%B8%8E%E8%B0%81%E7%9B%B8%E5%85%B3"><span class="toc-number">1.7.</span> <span class="toc-text">六、关系：与谁相关</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#relation%EF%BC%88%E5%8E%9F%E5%AD%90%EF%BC%89"><span class="toc-number">1.7.1.</span> <span class="toc-text">relation（原子）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#group%EF%BC%88%E7%BB%84%E5%90%88%EF%BC%89"><span class="toc-number">1.7.2.</span> <span class="toc-text">group（组合）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#tree%EF%BC%88%E8%81%9A%E5%90%88%EF%BC%89"><span class="toc-number">1.7.3.</span> <span class="toc-text">tree（聚合）</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%83%E3%80%81%E6%A8%A1%E6%9D%BF%E8%AF%AD%E6%B3%95"><span class="toc-number">1.8.</span> <span class="toc-text">七、模板语法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%AB%E3%80%81%E4%B8%BB%E9%A2%98"><span class="toc-number">1.9.</span> <span class="toc-text">八、主题</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B9%9D%E3%80%81%E5%92%8C%E6%A0%B8%E5%BF%83%E8%AF%AD%E8%A8%80%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="toc-number">1.10.</span> <span class="toc-text">九、和核心语言的关系</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8D%81%E3%80%81%E5%88%BB%E6%84%8F%E4%B8%8D%E5%81%9A%E7%9A%84%E4%B8%9C%E8%A5%BF"><span class="toc-number">1.11.</span> <span class="toc-text">十、刻意不做的东西</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8D%81%E4%B8%80%E3%80%81%E4%BB%8E%E7%AC%AC%E4%B8%80%E7%AF%87%E5%88%B0%E8%BF%99%E9%87%8C"><span class="toc-number">1.12.</span> <span class="toc-text">十一、从第一篇到这里</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%90%8E%E8%AE%B0"><span class="toc-number">1.13.</span> <span class="toc-text">后记</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">1.14.</span> <span class="toc-text">参考</span></a></li></ol></li></ol>
+		</div>
+		
+		<h3 id="（三）Pulse-GUI-语言设计理念与规范"><a href="#（三）Pulse-GUI-语言设计理念与规范" class="headerlink" title="（三）Pulse GUI 语言设计理念与规范"></a>（三）Pulse GUI 语言设计理念与规范</h3><h4 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h4><p><a href="/2026/01/21/event-driven-programming-paradigm/">第一篇</a>聊了范式，<a href="/2026/01/26/pulse-language-design/">第二篇</a>落地成语言。接下来该画界面了。</p>
+<p>这篇记录 Pulse GUI 的设计思路。</p>
+<hr>
+<h4 id="一、从哪里开始？"><a href="#一、从哪里开始？" class="headerlink" title="一、从哪里开始？"></a>一、从哪里开始？</h4><p>前两篇设计的是逻辑层——事件怎么流转、模块怎么通信。但程序不只有逻辑，还有界面。</p>
+<p>先想清楚一个问题：程序运行在哪？</p>
+<pre><code>前端（客户端）：用户看到的、交互的
+后端（服务端）：数据处理、业务逻辑
+单体应用（local）：既是客户端，也是服务端
+</code></pre>
+<p>传统做法是前后端分开设计，各有一套技术栈。但 Pulse 想统一——事件驱动在后端管逻辑，在前端管界面，在单体应用里两者合一。</p>
+<p>那前端这一层需要描述什么？</p>
+<pre><code>自身：我是什么      → 内容、外观
+世界：我在哪里      → 位置、空间
+关系：我和谁有关    → 层级、布局
+</code></pre>
+<p>这三个问题，就是 GUI 设计的三元概念。不管是客户端、服务端渲染、还是本地应用，GUI 要回答的都是这三件事。</p>
+<hr>
+<h4 id="二、GUI-的本质"><a href="#二、GUI-的本质" class="headerlink" title="二、GUI 的本质"></a>二、GUI 的本质</h4><p>传统 GUI 框架的做法：</p>
+<pre><code>Widget 树 + 状态管理 + 生命周期钩子 + 样式系统 + 动画引擎 + 布局系统 + ...
+</code></pre>
+<p>概念太多了。退一步想，一个 GUI 元素到底需要什么？</p>
+<pre><code>它是什么？      → 一个红色的矩形，上面写着&quot;确定&quot;
+它在哪里？      → 屏幕左上角 100, 200 的位置
+它和谁有关系？  → 它是弹窗的子元素，排在取消按钮右边
+</code></pre>
+<p>三个问题，刚好对应三个维度：</p>
+<pre><code>GUI = 自身 × 世界 × 关系
+
+自身：是什么 / 有什么（内容）
+世界：在哪里 / 怎么动（时空）
+关系：与谁相关（连接）
+</code></pre>
+<p>所有 GUI 问题都可以归到这三个维度里。</p>
+<hr>
+<h4 id="三、三元-×-三层"><a href="#三、三元-×-三层" class="headerlink" title="三、三元 × 三层"></a>三、三元 × 三层</h4><p>每个维度再分三层——原子、组合、聚合：</p>
+<table>
+<thead>
+<tr>
+<th>概念</th>
+<th>原子</th>
+<th>组合</th>
+<th>聚合</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>自身</strong></td>
+<td>node</td>
+<td>component</td>
+<td>view</td>
+</tr>
+<tr>
+<td><strong>世界</strong></td>
+<td>space</td>
+<td>viewport</td>
+<td>scene</td>
+</tr>
+<tr>
+<td><strong>关系</strong></td>
+<td>relation</td>
+<td>group</td>
+<td>tree</td>
+</tr>
+</tbody></table>
+<p>3 × 3 = 9 个概念，覆盖了 GUI 的所有场景。</p>
+<table>
+<thead>
+<tr>
+<th>层级</th>
+<th>含义</th>
+<th>类比</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>原子</td>
+<td>最小单元，不可再分</td>
+<td>砖头</td>
+</tr>
+<tr>
+<td>组合</td>
+<td>原子的组合，可复用</td>
+<td>墙</td>
+</tr>
+<tr>
+<td>聚合</td>
+<td>组合的组合，页面级</td>
+<td>房间</td>
+</tr>
+</tbody></table>
+<hr>
+<h4 id="四、自身：是什么-有什么"><a href="#四、自身：是什么-有什么" class="headerlink" title="四、自身：是什么 / 有什么"></a>四、自身：是什么 / 有什么</h4><h5 id="node（原子）"><a href="#node（原子）" class="headerlink" title="node（原子）"></a>node（原子）</h5><p>最小可见单元，不可再分。它就是一个可以看到的东西：</p>
+<pre><code class="pulse">&lt;Node
+    shape=&quot;rect&quot;
+    size=&quot;100 50&quot;
+    fill=&quot;red&quot;
+    stroke=&quot;1 black&quot;
+    text=&quot;Hello&quot;
+    image=&quot;icon.png&quot;
+    font=&quot;16 bold&quot;
+    opacity=&quot;0.8&quot;
+/&gt;
+</code></pre>
+<p>没有 <code>div</code>、<code>span</code>、<code>button</code>、<code>input</code> 的区分。一个 <code>Node</code> 可以是任何东西——矩形、圆形、文字、图片，取决于你给它什么属性。</p>
+<h5 id="component（组合）"><a href="#component（组合）" class="headerlink" title="component（组合）"></a>component（组合）</h5><p>node 的组合，可复用：</p>
+<pre><code class="pulse">component Button
+
+&lt;props&gt;
+    label: String
+    disabled: bool = false
+&lt;/props&gt;
+
+&lt;state&gt;
+    mode: idle | pressed
+&lt;/state&gt;
+
+&lt;template&gt;
+    &lt;Node
+        shape=&quot;rect&quot;
+        size=&quot;80 40&quot;
+        fill=&quot;&#123;&#123; mode == pressed ? theme.dark : theme.primary &#125;&#125;&quot;
+        text=&quot;&#123;&#123; label &#125;&#125;&quot;
+    /&gt;
+&lt;/template&gt;
+</code></pre>
+<p>注意 <code>&lt;state&gt;</code> 里的 <code>mode: idle | pressed</code>——这是枚举状态，按钮只有这两种状态，不多不少。</p>
+<h5 id="view（聚合）"><a href="#view（聚合）" class="headerlink" title="view（聚合）"></a>view（聚合）</h5><p>component 的组合，页面级别：</p>
+<pre><code class="pulse">view OrderPage
+
+&lt;state&gt;
+    orders: List&lt;Order&gt; = []
+    loading: bool = true
+&lt;/state&gt;
+
+&lt;handle&gt;
+    ViewLoad &#123; &#125; &#123;
+        send Order.Fetch &#123; &#125;
+    &#125;
+
+    Order.Fetched &#123; orders &#125; &#123;
+        set orders = orders
+        set loading = false
+    &#125;
+&lt;/handle&gt;
+
+&lt;template&gt;
+    &lt;Scene layout=&quot;column gap:16 padding:16&quot;&gt;
+        &lt;Node if=&quot;loading&quot; text=&quot;加载中...&quot; /&gt;
+        &lt;OrderCard for=&quot;order in orders&quot; :order=&quot;order&quot; /&gt;
+    &lt;/Scene&gt;
+&lt;/template&gt;
+</code></pre>
+<p>view 里出现了 <code>handle</code> 和 <code>send</code>——和 Pulse 核心语言一样的事件机制。GUI 不是独立的体系，它就是 Pulse 的一部分。</p>
+<hr>
+<h4 id="五、世界：在哪里-怎么动"><a href="#五、世界：在哪里-怎么动" class="headerlink" title="五、世界：在哪里 / 怎么动"></a>五、世界：在哪里 / 怎么动</h4><h5 id="space（原子）"><a href="#space（原子）" class="headerlink" title="space（原子）"></a>space（原子）</h5><p>节点在空间中的位置：</p>
+<pre><code class="pulse">&lt;Node
+    position=&quot;100 200&quot;
+    rotation=&quot;45deg&quot;
+    scale=&quot;1.5&quot;
+/&gt;
+</code></pre>
+<h5 id="viewport（组合）"><a href="#viewport（组合）" class="headerlink" title="viewport（组合）"></a>viewport（组合）</h5><p>可视窗口，决定用户看到什么：</p>
+<pre><code class="pulse">&lt;Viewport size=&quot;320 240&quot; offset=&quot;0 100&quot;&gt;
+    &lt;Scene&gt;...&lt;/Scene&gt;
+&lt;/Viewport&gt;
+</code></pre>
+<p>场景可能很大，viewport 是用户看到的那个窗口。就像地图软件——地图是整个城市，你看到的是屏幕大小的一块。</p>
+<h5 id="scene（聚合）"><a href="#scene（聚合）" class="headerlink" title="scene（聚合）"></a>scene（聚合）</h5><p>场景空间，可以比视窗大：</p>
+<pre><code class="pulse">&lt;Scene size=&quot;1000 1000&quot;&gt;
+    &lt;Node position=&quot;500 500&quot; /&gt;
+&lt;/Scene&gt;
+</code></pre>
+<h5 id="怎么动：无时间动画"><a href="#怎么动：无时间动画" class="headerlink" title="怎么动：无时间动画"></a>怎么动：无时间动画</h5><p>传统动画需要指定持续时间：</p>
+<pre><code class="css">/* CSS */
+transition: opacity 0.3s ease-in-out;
+</code></pre>
+<p>Pulse 不用时间，用三个要素：</p>
+<table>
+<thead>
+<tr>
+<th>要素</th>
+<th>说明</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>频率</td>
+<td>快慢（相对）</td>
+<td>instant / fast / normal / slow</td>
+</tr>
+<tr>
+<td>程度</td>
+<td>变化幅度</td>
+<td>属性变化</td>
+</tr>
+<tr>
+<td>循环</td>
+<td>重复次数</td>
+<td>1 / n / infinite</td>
+</tr>
+</tbody></table>
+<pre><code class="pulse">&lt;transition&gt;
+    idle -&gt; pressed &#123;
+        frequency: fast
+        magnitude: &#123;
+            scale: 1 -&gt; 0.95
+            fill: theme.primary -&gt; theme.dark
+        &#125;
+        loop: 1
+    &#125;
+
+    loading &#123;
+        frequency: normal
+        magnitude: &#123;
+            rotation: 0deg -&gt; 360deg
+        &#125;
+        loop: infinite
+    &#125;
+&lt;/transition&gt;
+</code></pre>
+<p>为什么不用时间？因为语言层是桥梁，它描述的是「变化的意图」，不是「变化的执行」。具体多少毫秒完成，是渲染层（执行层）的事。不同设备、不同帧率、不同用户偏好，执行层自己决定。</p>
+<p>这和 Pulse 核心语言的理念一致：语言层描述”要什么”，执行层决定”怎么做”。</p>
+<hr>
+<h4 id="六、关系：与谁相关"><a href="#六、关系：与谁相关" class="headerlink" title="六、关系：与谁相关"></a>六、关系：与谁相关</h4><h5 id="relation（原子）"><a href="#relation（原子）" class="headerlink" title="relation（原子）"></a>relation（原子）</h5><p>父子连接、层级：</p>
+<pre><code class="pulse">&lt;Node parent=&quot;container&quot; layer=&quot;1&quot; /&gt;
+</code></pre>
+<h5 id="group（组合）"><a href="#group（组合）" class="headerlink" title="group（组合）"></a>group（组合）</h5><p>组织分组、布局：</p>
+<pre><code class="pulse">&lt;Group layout=&quot;row gap:8 align:center&quot;&gt;
+    &lt;Button label=&quot;保存&quot; /&gt;
+    &lt;Button label=&quot;取消&quot; /&gt;
+&lt;/Group&gt;
+</code></pre>
+<h5 id="tree（聚合）"><a href="#tree（聚合）" class="headerlink" title="tree（聚合）"></a>tree（聚合）</h5><p>完整的层级结构：</p>
+<pre><code class="pulse">&lt;Tree&gt;
+    &lt;Node id=&quot;root&quot;&gt;
+        &lt;Node id=&quot;header&quot; /&gt;
+        &lt;Node id=&quot;content&quot; /&gt;
+        &lt;Node id=&quot;footer&quot; /&gt;
+    &lt;/Node&gt;
+&lt;/Tree&gt;
+</code></pre>
+<hr>
+<h4 id="七、模板语法"><a href="#七、模板语法" class="headerlink" title="七、模板语法"></a>七、模板语法</h4><p>GUI 需要把数据绑定到视图。Pulse 的模板语法：</p>
+<table>
+<thead>
+<tr>
+<th>语法</th>
+<th>作用</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>&#123;&#123; value &#125;&#125;</code></td>
+<td>文本插值</td>
+<td><code>text=&quot;&#123;&#123; name &#125;&#125;&quot;</code></td>
+</tr>
+<tr>
+<td><code>:prop</code></td>
+<td>属性绑定</td>
+<td><code>:disabled=&quot;loading&quot;</code></td>
+</tr>
+<tr>
+<td><code>::prop</code></td>
+<td>双向绑定</td>
+<td><code>::value=&quot;input&quot;</code></td>
+</tr>
+<tr>
+<td><code>@event</code></td>
+<td>事件绑定</td>
+<td><code>@click=&quot;HandleClick&quot;</code></td>
+</tr>
+<tr>
+<td><code>if</code> / <code>else</code></td>
+<td>条件渲染</td>
+<td><code>&lt;Node if=&quot;loading&quot; /&gt;</code></td>
+</tr>
+<tr>
+<td><code>for</code></td>
+<td>循环渲染</td>
+<td><code>&lt;Node for=&quot;item in items&quot; /&gt;</code></td>
+</tr>
+</tbody></table>
+<p>看着像 Vue？是的。声明式模板语法已经被验证过了，没必要重新发明。</p>
+<hr>
+<h4 id="八、主题"><a href="#八、主题" class="headerlink" title="八、主题"></a>八、主题</h4><p>颜色、样式不应该散落在各处。Pulse 用 <code>theme</code> 统一管理：</p>
+<pre><code class="pulse">theme Light &#123;
+    primary: #007AFF
+    dark: #0056B3
+    background: #F2F2F7
+    text: #333333
+    border: #E5E5EA
+&#125;
+
+theme Dark extends Light &#123;
+    background: #1C1C1E
+    text: #FFFFFF
+&#125;
+</code></pre>
+<p>组件里用 <code>theme.primary</code> 引用，切换主题时自动生效。<code>Dark extends Light</code> 表示只覆盖需要改的部分，其余继承。</p>
+<hr>
+<h4 id="九、和核心语言的关系"><a href="#九、和核心语言的关系" class="headerlink" title="九、和核心语言的关系"></a>九、和核心语言的关系</h4><p>Pulse GUI 不是独立的框架，它和核心语言共享同一套机制：</p>
+<table>
+<thead>
+<tr>
+<th>概念</th>
+<th>核心语言</th>
+<th>GUI</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>事件处理</td>
+<td><code>handle</code></td>
+<td><code>&lt;handle&gt;</code></td>
+</tr>
+<tr>
+<td>发送事件</td>
+<td><code>send</code></td>
+<td><code>send</code></td>
+</tr>
+<tr>
+<td>状态修改</td>
+<td><code>set</code></td>
+<td><code>set</code></td>
+</tr>
+<tr>
+<td>状态声明</td>
+<td><code>state</code></td>
+<td><code>&lt;state&gt;</code></td>
+</tr>
+<tr>
+<td>属性输入</td>
+<td>—</td>
+<td><code>&lt;props&gt;</code></td>
+</tr>
+</tbody></table>
+<p>GUI 组件里的 <code>handle</code> 可以直接处理业务事件：</p>
+<pre><code class="pulse">&lt;handle&gt;
+    Order.Fetched &#123; orders &#125; &#123;
+        set orders = orders
+        set loading = false
+    &#125;
+&lt;/handle&gt;
+</code></pre>
+<p>不需要中间层转换，不需要额外的状态管理库。业务事件进来，直接更新视图状态。</p>
+<hr>
+<h4 id="十、刻意不做的东西"><a href="#十、刻意不做的东西" class="headerlink" title="十、刻意不做的东西"></a>十、刻意不做的东西</h4><table>
+<thead>
+<tr>
+<th>没有</th>
+<th>为什么</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>虚拟 DOM</td>
+<td>声明式 + 事件驱动，渲染层自己优化</td>
+</tr>
+<tr>
+<td>CSS-in-JS</td>
+<td>属性直接写在节点上</td>
+</tr>
+<tr>
+<td>组件生命周期钩子</td>
+<td>用事件代替（<code>ViewLoad</code> 等）</td>
+</tr>
+<tr>
+<td>绝对时间动画</td>
+<td>语言层只描述意图，执行层决定时间</td>
+</tr>
+<tr>
+<td>Widget 类型系统</td>
+<td>只有 Node，属性决定外观</td>
+</tr>
+</tbody></table>
+<p>少一个概念，就少一类问题。</p>
+<hr>
+<h4 id="十一、从第一篇到这里"><a href="#十一、从第一篇到这里" class="headerlink" title="十一、从第一篇到这里"></a>十一、从第一篇到这里</h4><pre><code>第一篇：编程范式的思考
+  → 事件驱动消除并发
+  → 各范式混合使用
+
+第二篇：Pulse 语言设计
+  → 15 个关键字
+  → 三层架构
+  → 一切皆事件
+
+第三篇（本篇）：Pulse GUI 设计
+  → GUI = 自身 × 世界 × 关系
+  → 3 × 3 = 9 个概念
+  → 和核心语言共享事件机制
+</code></pre>
+<p>三篇文章走下来：范式思考 → 语言设计 → GUI 扩展。核心始终是同一个——<strong>事件来了，处理，发新事件</strong>。GUI 只是让这个模型有了一张脸。</p>
+<hr>
+<h4 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h4><p>Pulse GUI 的设计原则：</p>
+<table>
+<thead>
+<tr>
+<th>原则</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>三元</td>
+<td>自身 × 世界 × 关系</td>
+</tr>
+<tr>
+<td>三层</td>
+<td>原子 → 组合 → 聚合</td>
+</tr>
+<tr>
+<td>无时间</td>
+<td>描述意图，不描述执行</td>
+</tr>
+<tr>
+<td>事件驱动</td>
+<td>和核心语言统一</td>
+</tr>
+<tr>
+<td>声明式</td>
+<td>描述”是什么”，不是”怎么做”</td>
+</tr>
+</tbody></table>
+<p>自身定义内容，世界承载位置，关系组织结构，事件驱动变化。</p>
+<hr>
+<h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h4><p>本系列：</p>
+<ul>
+<li><a href="/2026/01/21/event-driven-programming-paradigm/">从面向对象到事件化：一种编程范式的思考</a></li>
+<li><a href="/2026/01/26/pulse-language-design/">Pulse 语言的设计思路</a></li>
+</ul>
+<p>架构模式：</p>
+<ul>
+<li>MVC: Model-View-Controller</li>
+<li>MVP: Model-View-Presenter</li>
+<li>MVVM: Model-View-ViewModel</li>
+<li>Elm Architecture: Model-Update-View</li>
+</ul>
+<p>Web 前端：</p>
+<ul>
+<li>Vue: 声明式模板与响应式数据绑定</li>
+<li>React: 组件化与单向数据流</li>
+<li>CSS / Tailwind CSS: 样式与布局系统</li>
+</ul>
+<p>桌面 GUI：</p>
+<ul>
+<li>WPF: XAML 声明式 UI 与数据绑定</li>
+<li>Qt / QML: 信号槽机制与属性绑定</li>
+<li>SwiftUI: 声明式 UI 框架</li>
+<li>Immediate Mode GUI (Dear ImGui)</li>
+</ul>
+<p>游戏引擎：</p>
+<ul>
+<li>Unity: 场景树、GameObject 组件模型</li>
+<li>Cocos Creator: 节点树与组件式开发</li>
+</ul>
+<p>附件：</p>
+<ul>
+<li><a href="/files/pulse-gui-spec.md">Pulse GUI 语言设计规范</a></li>
+</ul>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/编程范式/">编程范式</a><a href="/tags/事件驱动/">事件驱动</a><a href="/tags/语言设计/">语言设计</a><a href="/tags/Pulse/">Pulse</a><a href="/tags/GUI/">GUI</a><a href="/tags/DSL/">DSL</a>
+  </div>
+
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="https://makefile.so/2026/01/27/pulse-gui-design/" data-title="（三）Pulse GUI 语言设计理念与规范 | 喔喔" data-tsina="" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2026/02/03/gossip-service-discovery/" title="八卦协议：一个简单的服务发现方案">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  八卦协议：一个简单的服务发现方案</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2026/01/26/pulse-language-design/"  title="（二）Pulse 语言的设计思路">
+ <strong>NEXT:</strong><br/> 
+ <span>（二）Pulse 语言的设计思路
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+    <section class="comment">
+        <div id="vssue"></div>
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.min.js"></script>
+        <script src="https://unpkg.com/vssue/dist/vssue.github.min.js"></script>
+        <script>
+            new Vue({
+                el: '#vssue',
+                render: h => h('Vssue', {
+                    props: {
+                        title: '（三）Pulse GUI 语言设计理念与规范',
+                        options: {
+                            owner: 'imwower',
+                            repo: 'imwower.github.io',
+                            clientId: '894cf60c98c43ae1093d',
+                            clientSecret: 'fd3f62d0e91cb7e414fe7fcb0cc27932847974ec',
+                        },
+                    }
+                })
+            })
+        </script>
+        <link rel="stylesheet" href="https://unpkg.com/vssue/dist/vssue.min.css">
+        <style>
+            .vssue {
+                padding: 0;
+                padding-top: 10px;
+            }
+            .vssue :not(.vssue-comment-content) a {
+                color: #2ca6cb;
+            }
+            .vssue .vssue-button:not(:disabled).vssue-button-primary {
+                color: #2ca6cb;
+                border-color: #2ca6cb;
+            }
+            .vssue .vssue-button {
+                border: 2px solid #2ca6cb;
+                border-radius: 1px;
+            }
+            .vssue .vssue-new-comment .vssue-new-comment-input {
+                border-radius: 1px;
+            }
+            .vssue .vssue-status, vssue-progress-color, vssue-border-color {
+                color: #2ca6cb;
+            }
+        </style>
+    </section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+  <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%EF%BC%88%E4%B8%89%EF%BC%89Pulse-GUI-%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E7%90%86%E5%BF%B5%E4%B8%8E%E8%A7%84%E8%8C%83"><span class="toc-number">1.</span> <span class="toc-text">（三）Pulse GUI 语言设计理念与规范</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E4%BB%8E%E5%93%AA%E9%87%8C%E5%BC%80%E5%A7%8B%EF%BC%9F"><span class="toc-number">1.2.</span> <span class="toc-text">一、从哪里开始？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%8C%E3%80%81GUI-%E7%9A%84%E6%9C%AC%E8%B4%A8"><span class="toc-number">1.3.</span> <span class="toc-text">二、GUI 的本质</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E4%B8%89%E5%85%83-%C3%97-%E4%B8%89%E5%B1%82"><span class="toc-number">1.4.</span> <span class="toc-text">三、三元 × 三层</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E8%87%AA%E8%BA%AB%EF%BC%9A%E6%98%AF%E4%BB%80%E4%B9%88-%E6%9C%89%E4%BB%80%E4%B9%88"><span class="toc-number">1.5.</span> <span class="toc-text">四、自身：是什么 &#x2F; 有什么</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#node%EF%BC%88%E5%8E%9F%E5%AD%90%EF%BC%89"><span class="toc-number">1.5.1.</span> <span class="toc-text">node（原子）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#component%EF%BC%88%E7%BB%84%E5%90%88%EF%BC%89"><span class="toc-number">1.5.2.</span> <span class="toc-text">component（组合）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#view%EF%BC%88%E8%81%9A%E5%90%88%EF%BC%89"><span class="toc-number">1.5.3.</span> <span class="toc-text">view（聚合）</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E4%B8%96%E7%95%8C%EF%BC%9A%E5%9C%A8%E5%93%AA%E9%87%8C-%E6%80%8E%E4%B9%88%E5%8A%A8"><span class="toc-number">1.6.</span> <span class="toc-text">五、世界：在哪里 &#x2F; 怎么动</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#space%EF%BC%88%E5%8E%9F%E5%AD%90%EF%BC%89"><span class="toc-number">1.6.1.</span> <span class="toc-text">space（原子）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#viewport%EF%BC%88%E7%BB%84%E5%90%88%EF%BC%89"><span class="toc-number">1.6.2.</span> <span class="toc-text">viewport（组合）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#scene%EF%BC%88%E8%81%9A%E5%90%88%EF%BC%89"><span class="toc-number">1.6.3.</span> <span class="toc-text">scene（聚合）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%80%8E%E4%B9%88%E5%8A%A8%EF%BC%9A%E6%97%A0%E6%97%B6%E9%97%B4%E5%8A%A8%E7%94%BB"><span class="toc-number">1.6.4.</span> <span class="toc-text">怎么动：无时间动画</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E5%85%B3%E7%B3%BB%EF%BC%9A%E4%B8%8E%E8%B0%81%E7%9B%B8%E5%85%B3"><span class="toc-number">1.7.</span> <span class="toc-text">六、关系：与谁相关</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#relation%EF%BC%88%E5%8E%9F%E5%AD%90%EF%BC%89"><span class="toc-number">1.7.1.</span> <span class="toc-text">relation（原子）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#group%EF%BC%88%E7%BB%84%E5%90%88%EF%BC%89"><span class="toc-number">1.7.2.</span> <span class="toc-text">group（组合）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#tree%EF%BC%88%E8%81%9A%E5%90%88%EF%BC%89"><span class="toc-number">1.7.3.</span> <span class="toc-text">tree（聚合）</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%83%E3%80%81%E6%A8%A1%E6%9D%BF%E8%AF%AD%E6%B3%95"><span class="toc-number">1.8.</span> <span class="toc-text">七、模板语法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%AB%E3%80%81%E4%B8%BB%E9%A2%98"><span class="toc-number">1.9.</span> <span class="toc-text">八、主题</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B9%9D%E3%80%81%E5%92%8C%E6%A0%B8%E5%BF%83%E8%AF%AD%E8%A8%80%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="toc-number">1.10.</span> <span class="toc-text">九、和核心语言的关系</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8D%81%E3%80%81%E5%88%BB%E6%84%8F%E4%B8%8D%E5%81%9A%E7%9A%84%E4%B8%9C%E8%A5%BF"><span class="toc-number">1.11.</span> <span class="toc-text">十、刻意不做的东西</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8D%81%E4%B8%80%E3%80%81%E4%BB%8E%E7%AC%AC%E4%B8%80%E7%AF%87%E5%88%B0%E8%BF%99%E9%87%8C"><span class="toc-number">1.12.</span> <span class="toc-text">十一、从第一篇到这里</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%90%8E%E8%AE%B0"><span class="toc-number">1.13.</span> <span class="toc-text">后记</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">1.14.</span> <span class="toc-text">参考</span></a></li></ol></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+			<li><a href="/categories/创意/" title="创意">创意<sup>2</sup></a></li>
+		
+			<li><a href="/categories/想法/" title="想法">想法<sup>1</sup></a></li>
+		
+			<li><a href="/categories/软件/" title="软件">软件<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/2020/" title="2020">2020<sup>1</sup></a></li>
+		
+			<li><a href="/tags/ApplicationEventPublisher/" title="ApplicationEventPublisher">ApplicationEventPublisher<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Controller/" title="Controller">Controller<sup>1</sup></a></li>
+		
+			<li><a href="/tags/DSL/" title="DSL">DSL<sup>2</sup></a></li>
+		
+			<li><a href="/tags/Enum/" title="Enum">Enum<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Evernote/" title="Evernote">Evernote<sup>1</sup></a></li>
+		
+			<li><a href="/tags/GUI/" title="GUI">GUI<sup>1</sup></a></li>
+		
+			<li><a href="/tags/GitHub/" title="GitHub">GitHub<sup>1</sup></a></li>
+		
+			<li><a href="/tags/GitHub-Actions/" title="GitHub Actions">GitHub Actions<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Gossip/" title="Gossip">Gossip<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>1</sup></a></li>
+		
+			<li><a href="/tags/IP地址/" title="IP地址">IP地址<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Idea/" title="Idea">Idea<sup>1</sup></a></li>
+		
+			<li><a href="/tags/InstaPaper/" title="InstaPaper">InstaPaper<sup>1</sup></a></li>
+		
+			<li><a href="/tags/IntelliJ/" title="IntelliJ">IntelliJ<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Java/" title="Java">Java<sup>4</sup></a></li>
+		
+			<li><a href="/tags/Macbook/" title="Macbook">Macbook<sup>1</sup></a></li>
+		
+			<li><a href="/tags/MethodArgumentNotValidException/" title="MethodArgumentNotValidException">MethodArgumentNotValidException<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Mock/" title="Mock">Mock<sup>1</sup></a></li>
+		
+			<li><a href="/tags/NUL/" title="NUL">NUL<sup>1</sup></a></li>
+		
+		</ul>
+</div>
+
+
+</aside>
+</div>      
+    </div>
+    <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://twitter.com/im_wower" target="_blank" title="twitter"></a>
+		
+		
+		<a href="https://github.com/imwower" target="_blank" title="github"></a>
+		
+		
+	</div>
+		<p class="copyright">🤍 POWERED BY <a href="http://hexo.io" target="_blank" title="hexo">HEXO</a> AND THEME BY <a href="https://github.com/wizicer/iceman" target="_blank" title="Iceman">ICEMAN</a> © COPYLEFT 2012 - 2026 COPYRIGHT
+		
+		<a href="https://makefile.so" target="_blank" title="IM_WOWER">IM_WOWER 🤍</a>
+		
+		</p>
+</div>
+
+
+<!-- Highlight.js -->
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/styles/atom-one-dark-reasonable.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/highlight.min.js">
+</script>
+<script>
+    hljs.highlightAll();
+</script>
+
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+
+
+  </body>
+</html>

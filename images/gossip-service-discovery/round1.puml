@@ -1,0 +1,19 @@
+@startuml
+!theme plain
+skinparam backgroundColor #2d2d2d
+skinparam defaultFontColor white
+skinparam ArrowColor #4fc3f7
+skinparam RectangleBorderColor #4fc3f7
+skinparam RectangleBackgroundColor #3d3d3d
+
+title <color:#4fc3f7>Round 1: C src_ts=1000</color>
+
+rectangle "**C**\nsrc_ts=1000" as C
+
+rectangle "**A**\nsrc_ts=1000\nrcv_ts=2000" as A
+rectangle "**B**\nsrc_ts=1000\nrcv_ts=2001" as B
+
+C -down-> A
+C -down-> B
+
+@enduml

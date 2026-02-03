@@ -1,0 +1,31 @@
+@startuml
+!theme plain
+skinparam backgroundColor #2d2d2d
+skinparam defaultFontColor white
+skinparam ArrowColor #4fc3f7
+skinparam RectangleBorderColor #4fc3f7
+skinparam RectangleBackgroundColor #3d3d3d
+skinparam NoteBorderColor #4fc3f7
+skinparam NoteBackgroundColor #3d3d3d
+
+title <color:#4fc3f7>Round 2: C src_ts=1005</color>
+
+rectangle "**C**\nsrc_ts=1005" as C
+
+rectangle "**A**\nsrc_ts=1005\nrcv_ts=2100" as A
+rectangle "**B**\nsrc_ts=1005\nrcv_ts=2102" as B
+
+C -down-> A
+C -down-> B
+
+note bottom of A
+  src_ts 1005 > 1000
+  data updated
+end note
+
+note bottom of B
+  now - rcv_ts > TTL
+  then expired
+end note
+
+@enduml

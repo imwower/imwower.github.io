@@ -1,0 +1,19 @@
+@startuml gossip-round1
+!theme plain
+skinparam backgroundColor white
+skinparam defaultFontName "Monaco, Consolas, monospace"
+
+title Round 1: C broadcasts (src_ts=1000)
+
+rectangle "Node C\nsrc_ts=1000" as C #lightblue
+
+rectangle "Node A\nsrc_ts=1000\nrcv_ts=2000" as A #lightyellow
+rectangle "Node B\nsrc_ts=1000\nrcv_ts=2001" as B #lightyellow
+
+C --> A : gossip
+C --> B : gossip
+
+note bottom of A : A's local clock: 2000
+note bottom of B : B's local clock: 2001
+
+@enduml

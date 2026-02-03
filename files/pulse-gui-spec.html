@@ -1,0 +1,851 @@
+
+  
+    <!DOCTYPE HTML>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>喔喔</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="IM_WOWER">
+    
+    <meta name="description" content="喔喔">
+    
+    
+    
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="im_wower" />
+    <meta name="twitter:title" content="喔喔" />
+      
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/wower.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/wower.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+      <body>
+        <header>
+          <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/wower.jpg" alt="喔喔" title="喔喔"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="喔喔">喔喔</a></h1>
+				<h2 class="blog-motto">喔喔的收藏夹</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/links">Links</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+
+        </header>
+        <div id="container">
+          <div id="main" class="page" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/files/pulse-gui-spec.html" title="" itemprop="url"></a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="https://makefile.so" title="IM_WOWER">IM_WOWER</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2026-02-03T12:02:08.093Z" itemprop="datePublished">2026-02-03</time>
+    Updated:<time datetime="2026-02-03T12:02:08.093Z" itemprop="dateModified">2026-02-03</time>
+    
+  </p>
+</header>
+
+	<div class="article-content">
+		
+		
+		<h1 id="Pulse-GUI-语言设计规范"><a href="#Pulse-GUI-语言设计规范" class="headerlink" title="Pulse GUI 语言设计规范"></a>Pulse GUI 语言设计规范</h1><h2 id="一、核心理念"><a href="#一、核心理念" class="headerlink" title="一、核心理念"></a>一、核心理念</h2><p>GUI 由三个核心概念组成：</p>
+<pre><code>GUI = 自身 × 世界 × 关系
+
+自身：是什么/有什么（内容）
+世界：在哪里/怎么动（时空）
+关系：与谁相关（连接）
+</code></pre>
+<hr>
+<h2 id="二、三元-×-三层"><a href="#二、三元-×-三层" class="headerlink" title="二、三元 × 三层"></a>二、三元 × 三层</h2><table>
+<thead>
+<tr>
+<th>概念</th>
+<th>原子</th>
+<th>组合</th>
+<th>聚合</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>自身</strong></td>
+<td>node</td>
+<td>component</td>
+<td>view</td>
+</tr>
+<tr>
+<td><strong>世界</strong></td>
+<td>space</td>
+<td>viewport</td>
+<td>scene</td>
+</tr>
+<tr>
+<td><strong>关系</strong></td>
+<td>relation</td>
+<td>group</td>
+<td>tree</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="三、自身（是什么-有什么）"><a href="#三、自身（是什么-有什么）" class="headerlink" title="三、自身（是什么/有什么）"></a>三、自身（是什么/有什么）</h2><h3 id="3-1-node（原子）"><a href="#3-1-node（原子）" class="headerlink" title="3.1 node（原子）"></a>3.1 node（原子）</h3><p>最小可见单元，不可再分：</p>
+<pre><code class="pulse">&lt;Node
+    shape=&quot;rect&quot;
+    size=&quot;100 50&quot;
+    fill=&quot;red&quot;
+    stroke=&quot;1 black&quot;
+    text=&quot;Hello&quot;
+    image=&quot;icon.png&quot;
+    font=&quot;16 bold&quot;
+    opacity=&quot;0.8&quot;
+/&gt;
+</code></pre>
+<h3 id="3-2-component（组合）"><a href="#3-2-component（组合）" class="headerlink" title="3.2 component（组合）"></a>3.2 component（组合）</h3><p>node 的组合，可复用：</p>
+<pre><code class="pulse">component Button
+
+&lt;props&gt;
+    label: String
+    disabled: bool = false
+&lt;/props&gt;
+
+&lt;state&gt;
+    mode: idle | pressed
+&lt;/state&gt;
+
+&lt;template&gt;
+    &lt;Node
+        shape=&quot;rect&quot;
+        size=&quot;80 40&quot;
+        fill=&quot;&#123;&#123; mode == pressed ? theme.dark : theme.primary &#125;&#125;&quot;
+        text=&quot;&#123;&#123; label &#125;&#125;&quot;
+    /&gt;
+&lt;/template&gt;
+</code></pre>
+<h3 id="3-3-view（聚合）"><a href="#3-3-view（聚合）" class="headerlink" title="3.3 view（聚合）"></a>3.3 view（聚合）</h3><p>component 的组合，页面级别：</p>
+<pre><code class="pulse">view OrderPage
+
+&lt;props&gt;
+    userId: String
+&lt;/props&gt;
+
+&lt;state&gt;
+    orders: List&lt;Order&gt; = []
+    loading: bool = true
+&lt;/state&gt;
+
+&lt;handle&gt;
+    ViewLoad &#123; &#125; &#123;
+        send Order.Fetch &#123; userId &#125;
+    &#125;
+    
+    Order.Fetched &#123; orders &#125; &#123;
+        set orders = orders
+        set loading = false
+    &#125;
+&lt;/handle&gt;
+
+&lt;template&gt;
+    &lt;Scene&gt;
+        &lt;Node if=&quot;loading&quot; text=&quot;加载中...&quot; /&gt;
+        &lt;OrderCard for=&quot;order in orders&quot; :order=&quot;order&quot; /&gt;
+    &lt;/Scene&gt;
+&lt;/template&gt;
+</code></pre>
+<hr>
+<h2 id="四、世界（在哪里-怎么动）"><a href="#四、世界（在哪里-怎么动）" class="headerlink" title="四、世界（在哪里/怎么动）"></a>四、世界（在哪里/怎么动）</h2><h3 id="4-1-space（原子）"><a href="#4-1-space（原子）" class="headerlink" title="4.1 space（原子）"></a>4.1 space（原子）</h3><p>节点的位置、旋转、缩放：</p>
+<pre><code class="pulse">&lt;Node
+    position=&quot;100 200&quot;
+    rotation=&quot;45deg&quot;
+    scale=&quot;1.5&quot;
+/&gt;
+</code></pre>
+<h3 id="4-2-viewport（组合）"><a href="#4-2-viewport（组合）" class="headerlink" title="4.2 viewport（组合）"></a>4.2 viewport（组合）</h3><p>可视窗口，决定用户看到什么：</p>
+<pre><code class="pulse">&lt;Viewport size=&quot;320 240&quot; offset=&quot;0 100&quot;&gt;
+    &lt;Scene&gt;...&lt;/Scene&gt;
+&lt;/Viewport&gt;
+</code></pre>
+<h3 id="4-3-scene（聚合）"><a href="#4-3-scene（聚合）" class="headerlink" title="4.3 scene（聚合）"></a>4.3 scene（聚合）</h3><p>场景空间，可以比视窗大：</p>
+<pre><code class="pulse">&lt;Scene size=&quot;1000 1000&quot;&gt;
+    &lt;Node position=&quot;500 500&quot; /&gt;
+&lt;/Scene&gt;
+</code></pre>
+<h3 id="4-4-变化（怎么动）"><a href="#4-4-变化（怎么动）" class="headerlink" title="4.4 变化（怎么动）"></a>4.4 变化（怎么动）</h3><p>动画三要素（无时间）：</p>
+<table>
+<thead>
+<tr>
+<th>要素</th>
+<th>说明</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>频率</td>
+<td>快慢（相对）</td>
+<td>instant / fast / normal / slow</td>
+</tr>
+<tr>
+<td>程度</td>
+<td>变化幅度</td>
+<td>属性变化</td>
+</tr>
+<tr>
+<td>循环</td>
+<td>重复次数</td>
+<td>1 / n / infinite</td>
+</tr>
+</tbody></table>
+<pre><code class="pulse">&lt;transition&gt;
+    idle -&gt; pressed &#123;
+        frequency: fast
+        magnitude: &#123;
+            scale: 1 -&gt; 0.95
+            fill: theme.primary -&gt; theme.dark
+        &#125;
+        loop: 1
+    &#125;
+    
+    loading &#123;
+        frequency: normal
+        magnitude: &#123;
+            rotation: 0deg -&gt; 360deg
+        &#125;
+        loop: infinite
+    &#125;
+&lt;/transition&gt;
+</code></pre>
+<hr>
+<h2 id="五、关系（与谁相关）"><a href="#五、关系（与谁相关）" class="headerlink" title="五、关系（与谁相关）"></a>五、关系（与谁相关）</h2><h3 id="5-1-relation（原子）"><a href="#5-1-relation（原子）" class="headerlink" title="5.1 relation（原子）"></a>5.1 relation（原子）</h3><p>父子连接、层级：</p>
+<pre><code class="pulse">&lt;Node parent=&quot;container&quot; layer=&quot;1&quot; /&gt;
+</code></pre>
+<h3 id="5-2-group（组合）"><a href="#5-2-group（组合）" class="headerlink" title="5.2 group（组合）"></a>5.2 group（组合）</h3><p>组织分组、布局：</p>
+<pre><code class="pulse">&lt;Group layout=&quot;row gap:8 align:center&quot;&gt;
+    &lt;Button label=&quot;保存&quot; /&gt;
+    &lt;Button label=&quot;取消&quot; /&gt;
+&lt;/Group&gt;
+</code></pre>
+<h3 id="5-3-tree（聚合）"><a href="#5-3-tree（聚合）" class="headerlink" title="5.3 tree（聚合）"></a>5.3 tree（聚合）</h3><p>层级结构：</p>
+<pre><code class="pulse">&lt;Tree&gt;
+    &lt;Node id=&quot;root&quot;&gt;
+        &lt;Node id=&quot;header&quot; /&gt;
+        &lt;Node id=&quot;content&quot; /&gt;
+        &lt;Node id=&quot;footer&quot; /&gt;
+    &lt;/Node&gt;
+&lt;/Tree&gt;
+</code></pre>
+<hr>
+<h2 id="六、属性汇总"><a href="#六、属性汇总" class="headerlink" title="六、属性汇总"></a>六、属性汇总</h2><h3 id="6-1-自身属性"><a href="#6-1-自身属性" class="headerlink" title="6.1 自身属性"></a>6.1 自身属性</h3><table>
+<thead>
+<tr>
+<th>属性</th>
+<th>作用</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>shape</code></td>
+<td>形状</td>
+<td>rect / circle / path</td>
+</tr>
+<tr>
+<td><code>size</code></td>
+<td>尺寸</td>
+<td><code>100 50</code> / <code>fill</code></td>
+</tr>
+<tr>
+<td><code>fill</code></td>
+<td>填充</td>
+<td><code>red</code> / <code>#007AFF</code> / <code>theme.primary</code></td>
+</tr>
+<tr>
+<td><code>stroke</code></td>
+<td>描边</td>
+<td><code>1 black</code></td>
+</tr>
+<tr>
+<td><code>text</code></td>
+<td>文字</td>
+<td><code>&quot;Hello&quot;</code></td>
+</tr>
+<tr>
+<td><code>image</code></td>
+<td>图片</td>
+<td><code>&quot;icon.png&quot;</code></td>
+</tr>
+<tr>
+<td><code>font</code></td>
+<td>字体</td>
+<td><code>16 bold</code></td>
+</tr>
+<tr>
+<td><code>opacity</code></td>
+<td>透明度</td>
+<td><code>0.8</code></td>
+</tr>
+</tbody></table>
+<h3 id="6-2-世界属性"><a href="#6-2-世界属性" class="headerlink" title="6.2 世界属性"></a>6.2 世界属性</h3><table>
+<thead>
+<tr>
+<th>属性</th>
+<th>作用</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>position</code></td>
+<td>位置</td>
+<td><code>100 200</code></td>
+</tr>
+<tr>
+<td><code>rotation</code></td>
+<td>旋转</td>
+<td><code>45deg</code></td>
+</tr>
+<tr>
+<td><code>scale</code></td>
+<td>缩放</td>
+<td><code>1.5</code></td>
+</tr>
+<tr>
+<td><code>visible</code></td>
+<td>可见</td>
+<td><code>true</code> / <code>false</code></td>
+</tr>
+</tbody></table>
+<h3 id="6-3-关系属性"><a href="#6-3-关系属性" class="headerlink" title="6.3 关系属性"></a>6.3 关系属性</h3><table>
+<thead>
+<tr>
+<th>属性</th>
+<th>作用</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>parent</code></td>
+<td>父节点</td>
+<td><code>&quot;container&quot;</code></td>
+</tr>
+<tr>
+<td><code>layer</code></td>
+<td>层级</td>
+<td><code>1</code> / <code>&quot;overlay&quot;</code></td>
+</tr>
+<tr>
+<td><code>layout</code></td>
+<td>布局</td>
+<td><code>row</code> / <code>column</code></td>
+</tr>
+<tr>
+<td><code>align</code></td>
+<td>对齐</td>
+<td><code>center</code> / <code>start</code> / <code>end</code></td>
+</tr>
+<tr>
+<td><code>gap</code></td>
+<td>间距</td>
+<td><code>8</code></td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="七、模板语法"><a href="#七、模板语法" class="headerlink" title="七、模板语法"></a>七、模板语法</h2><table>
+<thead>
+<tr>
+<th>语法</th>
+<th>作用</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>&#123;&#123; value &#125;&#125;</code></td>
+<td>文本插值</td>
+<td><code>&lt;Node text=&quot;&#123;&#123; name &#125;&#125;&quot; /&gt;</code></td>
+</tr>
+<tr>
+<td><code>:prop=&quot;value&quot;</code></td>
+<td>属性绑定</td>
+<td><code>:disabled=&quot;loading&quot;</code></td>
+</tr>
+<tr>
+<td><code>::prop=&quot;value&quot;</code></td>
+<td>双向绑定</td>
+<td><code>::value=&quot;input&quot;</code></td>
+</tr>
+<tr>
+<td><code>@event=&quot;handler&quot;</code></td>
+<td>事件绑定</td>
+<td><code>@click=&quot;HandleClick&quot;</code></td>
+</tr>
+<tr>
+<td><code>if</code></td>
+<td>条件渲染</td>
+<td><code>&lt;Node if=&quot;loading&quot; /&gt;</code></td>
+</tr>
+<tr>
+<td><code>else-if</code></td>
+<td>条件渲染</td>
+<td><code>&lt;Node else-if=&quot;error&quot; /&gt;</code></td>
+</tr>
+<tr>
+<td><code>else</code></td>
+<td>条件渲染</td>
+<td><code>&lt;Node else /&gt;</code></td>
+</tr>
+<tr>
+<td><code>for</code></td>
+<td>循环渲染</td>
+<td><code>&lt;Node for=&quot;item in items&quot; /&gt;</code></td>
+</tr>
+<tr>
+<td><code>:key</code></td>
+<td>循环键</td>
+<td><code>:key=&quot;item.id&quot;</code></td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="八、主题"><a href="#八、主题" class="headerlink" title="八、主题"></a>八、主题</h2><pre><code class="pulse">theme Light &#123;
+    primary: #007AFF
+    dark: #0056B3
+    background: #F2F2F7
+    text: #333333
+    border: #E5E5EA
+&#125;
+
+theme Dark extends Light &#123;
+    background: #1C1C1E
+    text: #FFFFFF
+&#125;
+</code></pre>
+<hr>
+<h2 id="九、关键字汇总"><a href="#九、关键字汇总" class="headerlink" title="九、关键字汇总"></a>九、关键字汇总</h2><table>
+<thead>
+<tr>
+<th>关键字</th>
+<th>归属</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>node</code></td>
+<td>自身-原子</td>
+<td>基础节点</td>
+</tr>
+<tr>
+<td><code>component</code></td>
+<td>自身-组合</td>
+<td>组合组件</td>
+</tr>
+<tr>
+<td><code>view</code></td>
+<td>自身-聚合</td>
+<td>页面视图</td>
+</tr>
+<tr>
+<td><code>viewport</code></td>
+<td>世界-组合</td>
+<td>可视窗口</td>
+</tr>
+<tr>
+<td><code>scene</code></td>
+<td>世界-聚合</td>
+<td>场景空间</td>
+</tr>
+<tr>
+<td><code>group</code></td>
+<td>关系-组合</td>
+<td>分组</td>
+</tr>
+<tr>
+<td><code>tree</code></td>
+<td>关系-聚合</td>
+<td>层级树</td>
+</tr>
+<tr>
+<td><code>theme</code></td>
+<td>外观</td>
+<td>主题定义</td>
+</tr>
+<tr>
+<td><code>transition</code></td>
+<td>变化</td>
+<td>动画定义</td>
+</tr>
+<tr>
+<td><code>props</code></td>
+<td>输入</td>
+<td>组件属性</td>
+</tr>
+<tr>
+<td><code>state</code></td>
+<td>状态</td>
+<td>内部状态</td>
+</tr>
+<tr>
+<td><code>handle</code></td>
+<td>事件</td>
+<td>事件处理</td>
+</tr>
+<tr>
+<td><code>send</code></td>
+<td>事件</td>
+<td>发送事件</td>
+</tr>
+<tr>
+<td><code>set</code></td>
+<td>状态</td>
+<td>修改状态</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="十、完整示例"><a href="#十、完整示例" class="headerlink" title="十、完整示例"></a>十、完整示例</h2><h3 id="10-1-Button-组件"><a href="#10-1-Button-组件" class="headerlink" title="10.1 Button 组件"></a>10.1 Button 组件</h3><pre><code class="pulse">component Button
+
+&lt;props&gt;
+    label: String
+    disabled: bool = false
+    onClick: Event
+&lt;/props&gt;
+
+&lt;state&gt;
+    mode: idle | pressed
+&lt;/state&gt;
+
+&lt;handle&gt;
+    Press &#123; &#125; &#123;
+        if !disabled &#123; set mode = pressed &#125;
+    &#125;
+    
+    Release &#123; &#125; &#123;
+        set mode = idle
+        send onClick
+    &#125;
+&lt;/handle&gt;
+
+&lt;template&gt;
+    &lt;Node
+        shape=&quot;rect&quot;
+        size=&quot;80 40&quot;
+        fill=&quot;&#123;&#123; disabled ? theme.border : theme.primary &#125;&#125;&quot;
+        text=&quot;&#123;&#123; label &#125;&#125;&quot;
+        font=&quot;14 bold&quot;
+        @pressIn=&quot;Press&quot;
+        @pressOut=&quot;Release&quot;
+    /&gt;
+&lt;/template&gt;
+
+&lt;transition&gt;
+    idle -&gt; pressed &#123;
+        frequency: fast
+        magnitude: &#123; scale: 1 -&gt; 0.95 &#125;
+    &#125;
+    
+    pressed -&gt; idle &#123;
+        frequency: fast
+        magnitude: &#123; scale: 0.95 -&gt; 1 &#125;
+    &#125;
+&lt;/transition&gt;
+</code></pre>
+<h3 id="10-2-OrderPage-视图"><a href="#10-2-OrderPage-视图" class="headerlink" title="10.2 OrderPage 视图"></a>10.2 OrderPage 视图</h3><pre><code class="pulse">view OrderPage
+
+&lt;state&gt;
+    orders: List&lt;Order&gt; = []
+    loading: bool = true
+&lt;/state&gt;
+
+&lt;handle&gt;
+    ViewLoad &#123; &#125; &#123;
+        send Order.Fetch &#123; &#125;
+    &#125;
+    
+    Order.Fetched &#123; orders &#125; &#123;
+        set orders = orders
+        set loading = false
+    &#125;
+    
+    Delete &#123; orderId &#125; &#123;
+        send Order.Delete &#123; orderId &#125;
+    &#125;
+    
+    Order.Deleted &#123; orderId &#125; &#123;
+        set orders = orders.filter &#123; it.id != orderId &#125;
+    &#125;
+&lt;/handle&gt;
+
+&lt;template&gt;
+    &lt;Viewport size=&quot;fill&quot;&gt;
+        &lt;Scene layout=&quot;column gap:16 padding:16&quot;&gt;
+            &lt;Node text=&quot;我的订单&quot; font=&quot;24 bold&quot; /&gt;
+            
+            &lt;Node if=&quot;loading&quot; text=&quot;加载中...&quot; /&gt;
+            
+            &lt;Group else layout=&quot;column gap:12&quot;&gt;
+                &lt;OrderCard
+                    for=&quot;order in orders&quot;
+                    :key=&quot;order.id&quot;
+                    :order=&quot;order&quot;
+                    @delete=&quot;Delete &#123; orderId: order.id &#125;&quot;
+                /&gt;
+            &lt;/Group&gt;
+            
+            &lt;Button label=&quot;新建订单&quot; @click=&quot;Create&quot; /&gt;
+        &lt;/Scene&gt;
+    &lt;/Viewport&gt;
+&lt;/template&gt;
+
+&lt;transition&gt;
+    enter &#123;
+        frequency: normal
+        magnitude: &#123; opacity: 0 -&gt; 1 &#125;
+    &#125;
+&lt;/transition&gt;
+</code></pre>
+<hr>
+<h2 id="十一、设计原则"><a href="#十一、设计原则" class="headerlink" title="十一、设计原则"></a>十一、设计原则</h2><table>
+<thead>
+<tr>
+<th>原则</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>三元</strong></td>
+<td>自身 × 世界 × 关系</td>
+</tr>
+<tr>
+<td><strong>三层</strong></td>
+<td>原子 → 组合 → 聚合</td>
+</tr>
+<tr>
+<td><strong>无时间</strong></td>
+<td>频率相对，渲染层决定实际速度</td>
+</tr>
+<tr>
+<td><strong>事件驱动</strong></td>
+<td>handle 响应，send 触发</td>
+</tr>
+<tr>
+<td><strong>声明式</strong></td>
+<td>描述”是什么”，不是”怎么做”</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="十二、总结"><a href="#十二、总结" class="headerlink" title="十二、总结"></a>十二、总结</h2><pre><code>自身定义内容，世界承载位置，关系组织结构，事件驱动变化。
+</code></pre>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="https://makefile.so/files/pulse-gui-spec.html" data-title="喔喔" data-tsina="" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+	
+    <section class="comment">
+        <div id="vssue"></div>
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.min.js"></script>
+        <script src="https://unpkg.com/vssue/dist/vssue.github.min.js"></script>
+        <script>
+            new Vue({
+                el: '#vssue',
+                render: h => h('Vssue', {
+                    props: {
+                        title: '',
+                        options: {
+                            owner: 'imwower',
+                            repo: 'imwower.github.io',
+                            clientId: '894cf60c98c43ae1093d',
+                            clientSecret: 'fd3f62d0e91cb7e414fe7fcb0cc27932847974ec',
+                        },
+                    }
+                })
+            })
+        </script>
+        <link rel="stylesheet" href="https://unpkg.com/vssue/dist/vssue.min.css">
+        <style>
+            .vssue {
+                padding: 0;
+                padding-top: 10px;
+            }
+            .vssue :not(.vssue-comment-content) a {
+                color: #2ca6cb;
+            }
+            .vssue .vssue-button:not(:disabled).vssue-button-primary {
+                color: #2ca6cb;
+                border-color: #2ca6cb;
+            }
+            .vssue .vssue-button {
+                border: 2px solid #2ca6cb;
+                border-radius: 1px;
+            }
+            .vssue .vssue-new-comment .vssue-new-comment-input {
+                border-radius: 1px;
+            }
+            .vssue .vssue-status, vssue-progress-color, vssue-border-color {
+                color: #2ca6cb;
+            }
+        </style>
+    </section>
+
+
+</div>  
+        </div>
+        <footer><div id="footer">
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://twitter.com/im_wower" target="_blank" title="twitter"></a>
+		
+		
+		<a href="https://github.com/imwower" target="_blank" title="github"></a>
+		
+		
+	</div>
+		<p class="copyright">🤍 POWERED BY <a href="http://hexo.io" target="_blank" title="hexo">HEXO</a> AND THEME BY <a href="https://github.com/wizicer/iceman" target="_blank" title="Iceman">ICEMAN</a> © COPYLEFT 2012 - 2026 COPYRIGHT
+		
+		<a href="https://makefile.so" target="_blank" title="IM_WOWER">IM_WOWER 🤍</a>
+		
+		</p>
+</div>
+
+
+<!-- Highlight.js -->
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/styles/atom-one-dark-reasonable.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/highlight.min.js">
+</script>
+<script>
+    hljs.highlightAll();
+</script>
+
+</footer>
+        <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+
+
+      </body>
+     </html>
+     
